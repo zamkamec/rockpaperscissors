@@ -1,4 +1,4 @@
-# rockpaperscissors 
+# Rock Paper Scissors Game
 
 This is my JavaScript Project for The Odin Project.
 
