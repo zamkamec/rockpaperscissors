@@ -1,0 +1,55 @@
+<head>
+    <title>Rock Paper Scissors</title>
+</head>
+
+<body>
+    <p>Open the console</p>
+    <script>
+        let choices = ['Rock', 'Paper', 'Scissors'];
+        let playerScore = 0;
+        let computerScore = 0;
+        function computerPlay() {
+            computerSelection = choices[Math.floor(Math.random() * choices.length)];
+            return computerSelection
+        }
+        function result(computerSelection, playerSelection) {
+            console.log('You played ' + playerSelection);
+            console.log('PC played ' + computerSelection);
+            if (computerSelection == playerSelection) {
+                console.log('Tie')
+            }else if ((computerSelection == 'Rock' && playerSelection == 'Scissors') || 
+                (computerSelection == 'Scissors' && playerSelection == 'Paper') ||
+                (computerSelection == 'Paper' && playerSelection == 'Rock')) {
+                computerScore += 1;
+                console.log('You Lose');
+            }else{
+                playerScore += 1;
+                console.log('You Win')
+            }
+            console.log('Your Score : ' + playerScore);
+            console.log("Computer's Score :"  + computerScore);
+        }
+        function playGame() {
+            if(playerScore === 5) {
+            console.log('You Win');
+            }else if(computerScore === 5) {
+            console.log('You Lose');
+            }else{
+            playerSelection = window.prompt('Your Turn');
+            playerSelection = playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1).toLowerCase();
+            if ((playerSelection == 'Rock') || (playerSelection == 'Paper') || (playerSelection == 'Scissors')){
+                computerPlay();
+                result(computerSelection, playerSelection);
+                playGame();
+            }else {
+                console.log('Please Choose Rock, Paper or Scissors')
+                playGame();
+            }}
+
+        }
+
+            playGame();
+
+
+    </script>
+</body>

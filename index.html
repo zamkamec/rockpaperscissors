@@ -1,55 +1,169 @@
 <head>
     <title>Rock Paper Scissors</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <p>Open the console</p>
+    <div id='gameoverScreen'>
+        <div id='gameoverWindow'>
+        <h1 id="gameOverText">Game Over</h1>
+        <button class="textAni" id="playAgainButton" onclick="playAgain()">Play Again?</button>
+        </div>
+    </div>
+    <div id="scoreBoard">
+        <div id="player">
+            <img id="playerProfile" src="Assets/playerIcon.png" >
+            <div class="hpBar" id="playerHP"><h2>You</h2></div>
+        </div>
+        <div id="matchHistory">
+        </div>
+        <div id="computer">
+            <img id="CPUProfile" src="Assets/CPUIcon.png" >
+            <div class="hpBar" id="cpuHP"><h2>CPU</h2></div>
+        </div>
+    </div>
+    <div id="moves">
+        <img id="playerMove" src="Assets/Papericon.png">
+        <h1><span id="gameStatus" class="textAni">Press Any Button</span> </h1>
+        <img id="cpuMove" src="Assets/Rockicon.png">
+    </div>
+    <div id="pushButtons">
+        <input class='button' type="image" onclick="playGame('Rock')" src="Assets/Rock.png"/>
+        <input class='button' type="image" onclick="playGame('Paper')" src="Assets/Paper.png"/>
+        <input class='button' type="image" onclick="playGame('Scissors')" src="Assets/Scissors.png"/>
+    </div>
     <script>
         let choices = ['Rock', 'Paper', 'Scissors'];
+        let playerHP = 5;
+        let cpuHP = 5;
         let playerScore = 0;
         let computerScore = 0;
+        let results;
+        
+        hpBar();
+
+        function hpBar() {
+            // Player HP Bar
+            for (let i = 0; i < playerHP; i++) {
+                let hp = document.createElement("IMG");
+                hp.src = "Assets/hpbar.png"; 
+                document.getElementById("playerHP").appendChild(hp);                       
+            }
+
+            // CPU HP Bar
+            for (let i = 0; i < cpuHP; i++) {
+                let hp = document.createElement("IMG");
+                hp.src = "Assets/hpbar.png"; 
+                document.getElementById("cpuHP").appendChild(hp);                       
+            }
+        }
+
+        function playGame(playerSelection) {
+                document.getElementById("gameStatus").style.animation = 'none';
+                document.getElementById("playerMove").src = "Assets/" + playerSelection + "icon.png";
+                computerPlay();
+                result(computerSelection, playerSelection);
+            }
+
         function computerPlay() {
             computerSelection = choices[Math.floor(Math.random() * choices.length)];
+            document.getElementById("cpuMove").src = "Assets/" + computerSelection + "icon.png";
             return computerSelection
         }
+
         function result(computerSelection, playerSelection) {
             console.log('You played ' + playerSelection);
             console.log('PC played ' + computerSelection);
             if (computerSelection == playerSelection) {
                 console.log('Tie')
+                document.getElementById("gameStatus").innerHTML = 'Tie';
+                results = 'tie';
             }else if ((computerSelection == 'Rock' && playerSelection == 'Scissors') || 
                 (computerSelection == 'Scissors' && playerSelection == 'Paper') ||
                 (computerSelection == 'Paper' && playerSelection == 'Rock')) {
                 computerScore += 1;
                 console.log('You Lose');
+                document.getElementById("gameStatus").innerHTML = 'You Lose';
+                //Animation
+                document.body.style.animation = 'none';
+                document.body.offsetHeight; /* trigger reflow */
+                document.body.style.animation = "shake 0.5s"; 
+                document.getElementById("playerMove").style.animation = 'idlePlayer 1.5s alternate infinite ease-in-out';
+                document.getElementById("playerMove").offsetHeight; /* trigger reflow */
+                document.getElementById("playerMove").style.animation = "idlePlayer 1.5s alternate infinite ease-in-out, takeDMGPlayer 0.3s alternate";
+                results = 'cpu';
             }else{
                 playerScore += 1;
                 console.log('You Win')
+                document.getElementById("gameStatus").innerHTML = 'You Win';
+                //Animation
+                document.getElementById("cpuMove").style.animation = 'idleCPU 1.5s alternate infinite ease-in-out';
+                document.getElementById("cpuMove").offsetHeight; /* trigger reflow */
+                document.getElementById("cpuMove").style.animation = "idleCPU 1.5s alternate infinite ease-in-out, takeDMGCPU 0.3s alternate";
+                results = 'player';
             }
             console.log('Your Score : ' + playerScore);
             console.log("Computer's Score :"  + computerScore);
-        }
-        function playGame() {
             if(playerScore === 5) {
-            console.log('You Win');
-            }else if(computerScore === 5) {
-            console.log('You Lose');
-            }else{
-            playerSelection = window.prompt('Your Turn');
-            playerSelection = playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1).toLowerCase();
-            if ((playerSelection == 'Rock') || (playerSelection == 'Paper') || (playerSelection == 'Scissors')){
-                computerPlay();
-                result(computerSelection, playerSelection);
-                playGame();
+                gameOver(true);
+            }else if (computerScore === 5) {
+                gameOver(false);
+            }
+            scoreBoard(playerSelection, computerSelection, results);
+        }
+        function gameOver(playerWin) {
+            console.log('Game Over');
+            document.getElementById("gameoverScreen").style.display = 'block';
+            document.getElementById("gameoverScreen").style.zIndex = '1000';
+            document.getElementById("cpuMove").style.animation = 'none';
+            document.getElementById("playerMove").style.animation = 'none';
+            if(playerWin){
+                document.getElementById("gameOverText").innerHTML = 'You Have Defeated the CPU';
             }else {
-                console.log('Please Choose Rock, Paper or Scissors')
-                playGame();
-            }}
-
+                document.getElementById("gameOverText").innerHTML = 'You Lose'
+                document.getElementById("gameoverScreen").style.backgroundImage = 'url(Assets/youlose.png)'
+            }
         }
 
-            playGame();
+        function playAgain() {
+            window.location.reload(false);
+        }
 
+        function scoreBoard(playerSelection, computerSelection) {
+                let matchHistory = document.getElementById('matchHistory');
+                let preMatch = document.createElement("DIV");
+                let prePlayerMove = document.createElement("IMG");
+                let preCpuMove = document.createElement("IMG");
+                let vsText = document.createTextNode('vs');
+                let playerHP = document.getElementById('playerHP');
+                let cpuHP = document.getElementById('cpuHP')
+                preMatch.appendChild(prePlayerMove);
+                preMatch.appendChild(vsText);
+                preMatch.appendChild(preCpuMove);
 
+                prePlayerMove.src = "Assets/" + playerSelection + "icon.png"; 
+                preCpuMove.src = "Assets/" + computerSelection + "icon.png"; 
+                preCpuMove.style = "transform: scaleX(-1)";
+                matchHistory.appendChild(preMatch);
+
+                if (results == 'player') {
+                    prePlayerMove.style.opacity = "60%";
+                    cpuHP.lastElementChild.remove();
+
+                }else if (results == 'cpu') {
+                    preCpuMove.style.opacity = "60%";
+                    playerHP.lastElementChild.remove();
+                }
+                
+                if (matchHistory.childElementCount > 3) {
+                    matchHistory.firstElementChild.remove();
+                }
+
+            }
     </script>
 </body>
+<footer>
+    <h1>Code & Art by Zamkamec</h1>
+</footer>
