@@ -1,6 +1,6 @@
 # rockpaperscissors 
 
-This my JavaScript Project for The Odin Project.
+This is my JavaScript Project for The Odin Project.
 
 #
 
